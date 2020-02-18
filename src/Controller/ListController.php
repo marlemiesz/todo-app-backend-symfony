@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Task;
 use App\Entity\TaskList;
 use App\Repository\TaskListRepository;
+use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -16,11 +18,13 @@ class ListController extends AbstractFOSRestController
 {
     private $taskListRepository;
     private $entityManager;
+    private $taskRepository;
 
-    public function __construct(TaskListRepository $taskListRepository, EntityManagerInterface $entityManager)
+    public function __construct(TaskListRepository $taskListRepository, EntityManagerInterface $entityManager, TaskRepository $taskRepository)
     {
         $this->taskListRepository = $taskListRepository;
         $this->entityManager = $entityManager;
+        $this->taskRepository = $taskRepository;
     }
 
     public function getListsAction()
@@ -151,7 +155,48 @@ class ListController extends AbstractFOSRestController
             $errors[] = ['title' => 'This value cannot be empty'];
         }
         $errors[] = ['list' => 'List not found'];
-        
+
         return $this->view($errors, Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
+     * @Rest\RequestParam(name="title", description="Title for the new task", nullable=false)
+     */
+    public function postListTaskAction(ParamFetcher $paramFetcher, int $id)
+    {
+        $list = $this->taskListRepository->findOneBy(['id' => $id]);
+
+        if ($list) {
+            $title = $paramFetcher->get('title');
+
+            $task = new Task();
+            $task->setTitle($title);
+            $task->setList($list);
+
+            $this->entityManager->persist($task);
+            $this->entityManager->flush();
+
+            return $this->view($list->getTasks(), Response::HTTP_OK);
+        }
+
+        return $this->view(['message' => 'someting went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * @Rest\RequestParam(name="title", description="Title for the new task", nullable=false)
+     */
+    public function removeListTaskAction(ParamFetcher $paramFetcher, int $id)
+    {
+        $task = $this->taskRepository->findOneBy(['id' => $id]);
+
+        if ($task) {
+
+            $this->entityManager->remove($task);
+            $this->entityManager->flush();
+
+            return $this->view(null, Response::HTTP_NO_CONTENT);
+        }
+
+        return $this->view(['message' => 'someting went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
