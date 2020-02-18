@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Note;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -64,6 +65,31 @@ class TaskController extends AbstractFOSRestController
 
         if($task) {
             return $this->view($task->getNotes(), Response::HTTP_OK);
+        }
+
+        return $this->view(['message' => 'someting went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * @Rest\RequestParam(name="note", description="Note for the task", nullable=false)
+     */
+    public function postTaskNoteAction(ParamFetcher $paramFetcher, int $id)
+    {
+
+        $task = $this->taskRepository->findOneBy(['id' => $id]);
+
+        if($task) {
+            $note = new Note();
+
+            $note->setNote($paramFetcher->get('note'));
+            $note->setTask($task);
+
+            $task->addNote($note);
+
+            $this->entityManager->persist($note);
+            $this->entityManager->flush();
+
+            return $this->view($note, Response::HTTP_OK);
         }
 
         return $this->view(['message' => 'someting went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
