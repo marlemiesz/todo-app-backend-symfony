@@ -182,21 +182,4 @@ class ListController extends AbstractFOSRestController
         return $this->view(['message' => 'someting went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    /**
-     * @Rest\RequestParam(name="title", description="Title for the new task", nullable=false)
-     */
-    public function removeListTaskAction(ParamFetcher $paramFetcher, int $id)
-    {
-        $task = $this->taskRepository->findOneBy(['id' => $id]);
-
-        if ($task) {
-
-            $this->entityManager->remove($task);
-            $this->entityManager->flush();
-
-            return $this->view(null, Response::HTTP_NO_CONTENT);
-        }
-
-        return $this->view(['message' => 'someting went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
-    }
 }

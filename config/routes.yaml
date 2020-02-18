@@ -6,3 +6,7 @@ lists:
   resource: App\Controller\ListController
   prefix: api
   
+tasks:
+  type: rest
+  resource: App\Controller\TaskController
+  prefix: api
