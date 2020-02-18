@@ -58,6 +58,9 @@ class ListController extends AbstractFOSRestController
 
     public function getListTasksAction(int $id)
     {
+        $list = $this->taskListRepository->findOneBy(['id' => $id]);
+
+        return $this->view($list->getTasks(), Response::HTTP_OK);
     }
 
     public function putListsAction()
@@ -74,8 +77,8 @@ class ListController extends AbstractFOSRestController
      */
     public function backgroundListAction(Request $request, ParamFetcher $paramFetcher, $id)
     {
-        $list = $this->taskListRepository->findOneBy(['id'=>$id]);
-        
+        $list = $this->taskListRepository->findOneBy(['id' => $id]);
+
         $currentBackground = $list->getBackground();
         if (!is_null($currentBackground)) {
             $filesystem = new Filesystem();
@@ -93,7 +96,7 @@ class ListController extends AbstractFOSRestController
             );
 
             $list->setBackground($filename);
-            $list->setBackgroundPath('/uploads/'.$filename);
+            $list->setBackgroundPath('/uploads/' . $filename);
 
             $this->entityManager->persist($list);
             $this->entityManager->flush();
@@ -110,5 +113,45 @@ class ListController extends AbstractFOSRestController
     private function getUploadDir()
     {
         return $this->getParameter('uploads_dir');
+    }
+
+
+    public function deleteListAction(int $id)
+    {
+        $list = $this->taskListRepository->findOneBy(['id' => $id]);
+
+        $this->entityManager->remove($list);
+        $this->entityManager->flush();
+
+        return $this->view(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @Rest\RequestParam(name="title", description="The new title for the list", nullable=false)
+     * @param int $id
+     */
+    public function patchListTitleAction(ParamFetcher $paramFetcher, int $id)
+    {
+        $list = $this->taskListRepository->findOneBy(['id' => $id]);
+
+        $errors = [];
+
+        $title = $paramFetcher->get('title');
+
+        if ($list) {
+            if (trim($title) !== '') {
+
+                $list->setTitle($title);
+
+                $this->entityManager->persist($list);
+                $this->entityManager->flush();
+
+                return $this->view(null, Response::HTTP_NO_CONTENT);
+            }
+            $errors[] = ['title' => 'This value cannot be empty'];
+        }
+        $errors[] = ['list' => 'List not found'];
+        
+        return $this->view($errors, Response::HTTP_BAD_REQUEST);
     }
 }
