@@ -8,11 +8,11 @@ use App\Repository\TaskListRepository;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Request\ParamFetcher;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 class ListController extends AbstractFOSRestController
 {
@@ -33,11 +33,11 @@ class ListController extends AbstractFOSRestController
         return $this->view($data, Response::HTTP_OK);
     }
 
-    public function getListAction(int $id)
+    public function getListAction(TaskList $list)
     {
-        $data = $this->taskListRepository->findOneBy(['id' => $id]);
 
-        return $this->view($data, Response::HTTP_OK);
+        return $this->view($list, Response::HTTP_OK);
+
     }
 
     /**
@@ -60,28 +60,19 @@ class ListController extends AbstractFOSRestController
         return $this->view(['title' => 'This cannot be null'], Response::HTTP_BAD_REQUEST);
     }
 
-    public function getListTasksAction(int $id)
+    public function getListTasksAction(TaskList $list)
     {
-        $list = $this->taskListRepository->findOneBy(['id' => $id]);
 
         return $this->view($list->getTasks(), Response::HTTP_OK);
-    }
 
-    public function putListsAction()
-    {
-    }
-
-    public function stateListsAction($id)
-    {
     }
 
     /**
      * @Rest\FileParam(name="image", description="The background of the list", nullable=false, image=true)
      * @param int $id
      */
-    public function backgroundListAction(Request $request, ParamFetcher $paramFetcher, $id)
+    public function backgroundListAction(Request $request, ParamFetcher $paramFetcher, TaskList $list)
     {
-        $list = $this->taskListRepository->findOneBy(['id' => $id]);
 
         $currentBackground = $list->getBackground();
         if (!is_null($currentBackground)) {
@@ -90,7 +81,7 @@ class ListController extends AbstractFOSRestController
                 $this->getUploadDir() . $currentBackground
             );
         }
-        $file  = $paramFetcher->get('image');
+        $file = $paramFetcher->get('image');
         if ($file) {
             $filename = md5(uniqid()) . '.' . $file->guessClientExtension();
 
@@ -120,9 +111,8 @@ class ListController extends AbstractFOSRestController
     }
 
 
-    public function deleteListAction(int $id)
+    public function deleteListAction(TaskList $list)
     {
-        $list = $this->taskListRepository->findOneBy(['id' => $id]);
 
         $this->entityManager->remove($list);
         $this->entityManager->flush();
@@ -134,9 +124,8 @@ class ListController extends AbstractFOSRestController
      * @Rest\RequestParam(name="title", description="The new title for the list", nullable=false)
      * @param int $id
      */
-    public function patchListTitleAction(ParamFetcher $paramFetcher, int $id)
+    public function patchListTitleAction(ParamFetcher $paramFetcher, TaskList $list)
     {
-        $list = $this->taskListRepository->findOneBy(['id' => $id]);
 
         $errors = [];
 
@@ -162,9 +151,8 @@ class ListController extends AbstractFOSRestController
     /**
      * @Rest\RequestParam(name="title", description="Title for the new task", nullable=false)
      */
-    public function postListTaskAction(ParamFetcher $paramFetcher, int $id)
+    public function postListTaskAction(ParamFetcher $paramFetcher, TaskList $list)
     {
-        $list = $this->taskListRepository->findOneBy(['id' => $id]);
 
         if ($list) {
             $title = $paramFetcher->get('title');
@@ -180,6 +168,7 @@ class ListController extends AbstractFOSRestController
         }
 
         return $this->view(['message' => 'someting went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
+
     }
 
 }

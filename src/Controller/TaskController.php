@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Note;
+use App\Entity\Task;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -26,10 +27,8 @@ class TaskController extends AbstractFOSRestController
     /**
      * @Rest\RequestParam(name="title", description="Title for the new task", nullable=false)
      */
-    public function deleteTaskAction(ParamFetcher $paramFetcher, int $id)
+    public function deleteTaskAction(ParamFetcher $paramFetcher, Task $task)
     {
-        $task = $this->taskRepository->findOneBy(['id' => $id]);
-
         if ($task) {
 
             $this->entityManager->remove($task);
@@ -44,10 +43,8 @@ class TaskController extends AbstractFOSRestController
     /**
      * @Rest\RequestParam(name="title", description="Title for the new task", nullable=false)
      */
-    public function statusTaskAction(ParamFetcher $paramFetcher, int $id)
+    public function statusTaskAction(ParamFetcher $paramFetcher, Task $task)
     {
-        $task = $this->taskRepository->findOneBy(['id' => $id]);
-
         if ($task) {
             $task->setIsComplete(!$task->getIsComplete());
             $this->entityManager->persist($task);
@@ -59,10 +56,8 @@ class TaskController extends AbstractFOSRestController
         return $this->view(['message' => 'someting went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    public function getTaskNotesAction(int $id)
+    public function getTaskNotesAction(Task $task)
     {
-        $task = $this->taskRepository->findOneBy(['id' => $id]);
-
         if($task) {
             return $this->view($task->getNotes(), Response::HTTP_OK);
         }
@@ -73,11 +68,8 @@ class TaskController extends AbstractFOSRestController
     /**
      * @Rest\RequestParam(name="note", description="Note for the task", nullable=false)
      */
-    public function postTaskNoteAction(ParamFetcher $paramFetcher, int $id)
+    public function postTaskNoteAction(ParamFetcher $paramFetcher, Task $task)
     {
-
-        $task = $this->taskRepository->findOneBy(['id' => $id]);
-
         if($task) {
             $note = new Note();
 

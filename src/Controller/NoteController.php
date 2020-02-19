@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Note;
 use App\Repository\NoteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -20,10 +21,8 @@ class NoteController extends AbstractFOSRestController
         $this->entityManager = $entityManager;
     }
 
-    public function deleteNoteAction(int $id)
+    public function deleteNoteAction(Note $note)
     {
-        $note = $this->noteRepository->findOneBy(['id'=>$id]);
-
         if($note){
 
             $this->entityManager->remove($note);
