@@ -40,21 +40,34 @@ class Task
      */
     private $notes;
 
+    /**
+     * Task constructor.
+     */
     public function __construct()
     {
         $this->notes = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
+    /**
+     * @param string $title
+     * @return $this
+     */
     public function setTitle(string $title): self
     {
         $this->title = $title;
@@ -62,11 +75,18 @@ class Task
         return $this;
     }
 
+    /**
+     * @return bool|null
+     */
     public function getIsComplete(): ?bool
     {
         return $this->isComplete;
     }
 
+    /**
+     * @param bool $isComplete
+     * @return $this
+     */
     public function setIsComplete(bool $isComplete): self
     {
         $this->isComplete = $isComplete;
@@ -74,11 +94,18 @@ class Task
         return $this;
     }
 
+    /**
+     * @return TaskList|null
+     */
     public function getList(): ?TaskList
     {
         return $this->list;
     }
 
+    /**
+     * @param TaskList|null $list
+     * @return $this
+     */
     public function setList(?TaskList $list): self
     {
         $this->list = $list;
@@ -94,6 +121,10 @@ class Task
         return $this->notes;
     }
 
+    /**
+     * @param Note $note
+     * @return $this
+     */
     public function addNote(Note $note): self
     {
         if (!$this->notes->contains($note)) {
@@ -104,6 +135,10 @@ class Task
         return $this;
     }
 
+    /**
+     * @param Note $note
+     * @return $this
+     */
     public function removeNote(Note $note): self
     {
         if ($this->notes->contains($note)) {

@@ -24,20 +24,22 @@ class Note
     private $note;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Task", inversedBy="notes")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Task", inversedBy="notes", cascade={"REMOVE"})
      */
     private $task;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNote(): ?string
-    {
-        return $this->note;
-    }
-
+    /**
+     * @param string $note
+     * @return $this
+     */
     public function setNote(string $note): self
     {
         $this->note = $note;
@@ -45,11 +47,18 @@ class Note
         return $this;
     }
 
+    /**
+     * @return Task|null
+     */
     public function getTask(): ?Task
     {
         return $this->task;
     }
 
+    /**
+     * @param Task|null $task
+     * @return $this
+     */
     public function setTask(?Task $task): self
     {
         $this->task = $task;

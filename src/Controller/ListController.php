@@ -20,6 +20,12 @@ class ListController extends AbstractFOSRestController
     private $entityManager;
     private $taskRepository;
 
+    /**
+     * ListController constructor.
+     * @param TaskListRepository $taskListRepository
+     * @param EntityManagerInterface $entityManager
+     * @param TaskRepository $taskRepository
+     */
     public function __construct(TaskListRepository $taskListRepository, EntityManagerInterface $entityManager, TaskRepository $taskRepository)
     {
         $this->taskListRepository = $taskListRepository;
@@ -27,12 +33,19 @@ class ListController extends AbstractFOSRestController
         $this->taskRepository = $taskRepository;
     }
 
+    /**
+     * @return \FOS\RestBundle\View\View
+     */
     public function getListsAction()
     {
         $data = $this->taskListRepository->findAll();
         return $this->view($data, Response::HTTP_OK);
     }
 
+    /**
+     * @param TaskList $list
+     * @return \FOS\RestBundle\View\View
+     */
     public function getListAction(TaskList $list)
     {
 
@@ -42,6 +55,8 @@ class ListController extends AbstractFOSRestController
 
     /**
      * @Rest\RequestParam(name="title", description="Title of the list", nullable=false)
+     * @param ParamFetcher $paramFetcher
+     * @return \FOS\RestBundle\View\View
      */
     public function postListsAction(ParamFetcher $paramFetcher)
     {
@@ -60,6 +75,10 @@ class ListController extends AbstractFOSRestController
         return $this->view(['title' => 'This cannot be null'], Response::HTTP_BAD_REQUEST);
     }
 
+    /**
+     * @param TaskList $list
+     * @return \FOS\RestBundle\View\View
+     */
     public function getListTasksAction(TaskList $list)
     {
 
@@ -69,7 +88,10 @@ class ListController extends AbstractFOSRestController
 
     /**
      * @Rest\FileParam(name="image", description="The background of the list", nullable=false, image=true)
-     * @param int $id
+     * @param Request $request
+     * @param ParamFetcher $paramFetcher
+     * @param TaskList $list
+     * @return \FOS\RestBundle\View\View
      */
     public function backgroundListAction(Request $request, ParamFetcher $paramFetcher, TaskList $list)
     {
@@ -105,12 +127,19 @@ class ListController extends AbstractFOSRestController
         return $this->view(['message' => 'Someting went wrong'], Response::HTTP_BAD_REQUEST);
     }
 
+    /**
+     * @return mixed
+     */
     private function getUploadDir()
     {
         return $this->getParameter('uploads_dir');
     }
 
 
+    /**
+     * @param TaskList $list
+     * @return \FOS\RestBundle\View\View
+     */
     public function deleteListAction(TaskList $list)
     {
 
@@ -122,7 +151,9 @@ class ListController extends AbstractFOSRestController
 
     /**
      * @Rest\RequestParam(name="title", description="The new title for the list", nullable=false)
-     * @param int $id
+     * @param ParamFetcher $paramFetcher
+     * @param TaskList $list
+     * @return \FOS\RestBundle\View\View
      */
     public function patchListTitleAction(ParamFetcher $paramFetcher, TaskList $list)
     {
@@ -150,6 +181,9 @@ class ListController extends AbstractFOSRestController
 
     /**
      * @Rest\RequestParam(name="title", description="Title for the new task", nullable=false)
+     * @param ParamFetcher $paramFetcher
+     * @param TaskList $list
+     * @return \FOS\RestBundle\View\View
      */
     public function postListTaskAction(ParamFetcher $paramFetcher, TaskList $list)
     {

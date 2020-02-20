@@ -37,25 +37,38 @@ class TaskList
     private $backgroundPath;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Task", mappedBy="list")
+     * @ORM\OneToMany(targetEntity="App\Entity\Task", mappedBy="list", cascade={"REMOVE"})
      */
     private $tasks;
 
+    /**
+     * TaskList constructor.
+     */
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
+    /**
+     * @param string $title
+     * @return $this
+     */
     public function setTitle(string $title): self
     {
         $this->title = $title;
@@ -63,11 +76,18 @@ class TaskList
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getBackground(): ?string
     {
         return $this->background;
     }
 
+    /**
+     * @param string|null $background
+     * @return $this
+     */
     public function setBackground(?string $background): self
     {
         $this->background = $background;
@@ -75,11 +95,18 @@ class TaskList
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getBackgroundPath(): ?string
     {
         return $this->backgroundPath;
     }
 
+    /**
+     * @param string|null $backgroundPath
+     * @return $this
+     */
     public function setBackgroundPath(?string $backgroundPath): self
     {
         $this->backgroundPath = $backgroundPath;
@@ -95,6 +122,10 @@ class TaskList
         return $this->tasks;
     }
 
+    /**
+     * @param Task $task
+     * @return $this
+     */
     public function addTask(Task $task): self
     {
         if (!$this->tasks->contains($task)) {
@@ -105,6 +136,10 @@ class TaskList
         return $this;
     }
 
+    /**
+     * @param Task $task
+     * @return $this
+     */
     public function removeTask(Task $task): self
     {
         if ($this->tasks->contains($task)) {

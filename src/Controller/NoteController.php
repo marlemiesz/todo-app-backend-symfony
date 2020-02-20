@@ -15,12 +15,21 @@ class NoteController extends AbstractFOSRestController
     private $entityManager;
 
 
+    /**
+     * NoteController constructor.
+     * @param NoteRepository $noteRepository
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(NoteRepository $noteRepository, EntityManagerInterface $entityManager)
     {
         $this->noteRepository = $noteRepository;
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * @param Note $note
+     * @return \FOS\RestBundle\View\View
+     */
     public function deleteNoteAction(Note $note)
     {
         if($note){
@@ -33,5 +42,13 @@ class NoteController extends AbstractFOSRestController
 
         return $this->view(['message' => 'someting went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
 
+    }
+
+    /**
+     * @param Note $note
+     * @return \FOS\RestBundle\View\View
+     */
+    public function getNoteAction(Note $note){
+        return $this->view($note,Response::HTTP_OK);
     }
 }
