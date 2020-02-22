@@ -59,6 +59,9 @@ class TaskController extends AbstractFOSRestController
 
     /**
      * @Rest\RequestParam(name="title", description="Title for the new task", nullable=false)
+     * @param ParamFetcher $paramFetcher
+     * @param Task $task
+     * @return \FOS\RestBundle\View\View
      */
     public function statusTaskAction(ParamFetcher $paramFetcher, Task $task)
     {
@@ -79,7 +82,7 @@ class TaskController extends AbstractFOSRestController
      */
     public function getTaskNotesAction(Task $task)
     {
-        if($task) {
+        if ($task) {
             return $this->view($task->getNotes(), Response::HTTP_OK);
         }
 
@@ -94,7 +97,7 @@ class TaskController extends AbstractFOSRestController
      */
     public function postTaskNoteAction(ParamFetcher $paramFetcher, Task $task)
     {
-        if($task) {
+        if ($task) {
             $note = new Note();
 
             $note->setNote($paramFetcher->get('note'));

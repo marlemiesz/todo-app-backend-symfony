@@ -32,7 +32,7 @@ class NoteController extends AbstractFOSRestController
      */
     public function deleteNoteAction(Note $note)
     {
-        if($note){
+        if ($note) {
 
             $this->entityManager->remove($note);
             $this->entityManager->flush();
@@ -48,7 +48,8 @@ class NoteController extends AbstractFOSRestController
      * @param Note $note
      * @return \FOS\RestBundle\View\View
      */
-    public function getNoteAction(Note $note){
-        return $this->view($note,Response::HTTP_OK);
+    public function getNoteAction(Note $note)
+    {
+        return $this->view($note, Response::HTTP_OK);
     }
 }
