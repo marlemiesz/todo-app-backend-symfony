@@ -2,30 +2,23 @@
 
 namespace App\Serializer\Normalizer;
 
+use App\Entity\Note;
 use App\Entity\TaskList;
-use Symfony\Component\Asset\Packages;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class TaskListNormalizer implements NormalizerInterface {
-    /**
-     * @var Packages
-     */
-    private $packages;
+class PublicDataNormalizer implements NormalizerInterface {
     /**
      * @var ObjectNormalizer
      */
     private $objectNormalizer;
 
     /**
-     * TaskListNormalizer constructor.
+     * PublicDataNormalizer constructor.
      * @param ObjectNormalizer $objectNormalizer
-     * @param Packages $packages
      */
-    public function __construct(ObjectNormalizer $objectNormalizer, Packages $packages)
+    public function __construct(ObjectNormalizer $objectNormalizer)
     {
-
-        $this->packages = $packages;
         $this->objectNormalizer = $objectNormalizer;
     }
 
@@ -37,9 +30,6 @@ class TaskListNormalizer implements NormalizerInterface {
      */
     public function normalize($object, $format = null, array $context = [])
     {
-        $object->setBackgroundPath(
-            $this->packages->getUrl($object->getBackgroundPath(), 'backgrounds')
-        );
 
         $context['ignored_attributes'] = ['user'];
 
@@ -48,6 +38,7 @@ class TaskListNormalizer implements NormalizerInterface {
         return $data;
     }
 
+
     /**
      * @param mixed $data
      * @param null $format
@@ -55,6 +46,6 @@ class TaskListNormalizer implements NormalizerInterface {
      */
     public function supportsNormalization($data, $format = null)
     {
-        return $data instanceof TaskList;
+        return $data instanceof TaskList || $data instanceof Task || $data instanceof Note;
     }
 }

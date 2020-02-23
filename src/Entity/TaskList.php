@@ -40,6 +40,10 @@ class TaskList
      * @ORM\OneToMany(targetEntity="App\Entity\Task", mappedBy="list", cascade={"REMOVE"})
      */
     private $tasks;
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="lists")
+     */
+    private $user;
 
     /**
      * TaskList constructor.
@@ -149,6 +153,18 @@ class TaskList
                 $task->setList(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

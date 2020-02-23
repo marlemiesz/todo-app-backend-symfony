@@ -65,4 +65,9 @@ class Note
 
         return $this;
     }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
 }
