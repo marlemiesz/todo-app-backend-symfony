@@ -38,7 +38,7 @@ class AuthenticationSuccessListener
             new Cookie(
                 "BEARER",
                 $token,
-                (new \DateTime())->add(new \DateInterval('PT' . 3360 . 'S')),
+                (new \DateTime())->add(new \DateInterval('PT' . $this->tokenTtl . 'S')),
                 '/',
                 null,
                 $this->secure

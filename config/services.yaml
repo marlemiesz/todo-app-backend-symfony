@@ -28,4 +28,7 @@ services:
     App\Listeners\AuthenticationSuccessListener:
         arguments: ['%lexik_jwt_authentication.token_ttl%']
         tags:
-            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccess }
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccess, prioryty: -2 }
+
+    App\Listeners\RefreshTokenListener:
+        arguments: ['%gesdinet_jwt_refresh_token.ttl%']
