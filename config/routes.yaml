@@ -22,3 +22,8 @@ notes:
   type: rest
   resource: App\Controller\NoteController
   prefix: api
+
+preferences:
+  type: rest
+  resource: App\Controller\PreferenceController
+  prefix: api

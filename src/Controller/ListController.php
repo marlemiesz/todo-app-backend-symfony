@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Preference;
 use App\Entity\Task;
 use App\Entity\TaskList;
 use App\Repository\TaskListRepository;
@@ -63,6 +64,9 @@ class ListController extends AbstractFOSRestController
         $title = $paramFetcher->get('title');
         if ($title) {
             $list = new TaskList();
+
+            $preferences = new Preference();
+            $list->setPreferences($preferences);
 
             $list->setTitle($title);
 
